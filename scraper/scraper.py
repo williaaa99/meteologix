@@ -41,7 +41,7 @@ def _make_driver() -> webdriver.Chrome:
     options.add_argument("--disable-setuid-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-blink-features=AutomationControlled")
-    options.add_argument("--window-size=1280,900")
+    options.add_argument("--window-size=1600,1200")
     options.add_argument(f"--user-agent={USER_AGENT}")
     options.add_argument("--lang=pt-BR")
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
