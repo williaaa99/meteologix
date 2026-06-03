@@ -1,0 +1,14 @@
+[
+  "tests/test_config.py::test_config_raises_on_missing_required_var",
+  "tests/test_config.py::test_config_storage_dir_has_default",
+  "tests/test_gif_maker.py::test_get_label_formats_weekday_and_date",
+  "tests/test_gif_maker.py::test_get_label_monday",
+  "tests/test_gif_maker.py::test_get_label_returns_empty_for_invalid",
+  "tests/test_gif_maker.py::test_make_gif_creates_file",
+  "tests/test_gif_maker.py::test_make_gif_raises_when_fewer_than_4_images",
+  "tests/test_gif_maker.py::test_make_gif_uses_last_4_when_more_available",
+  "tests/test_scraper.py::test_build_url_formats_date_correctly",
+  "tests/test_scraper.py::test_build_url_zero_pads_month_and_day",
+  "tests/test_scraper.py::test_capture_map_raises_on_timeout",
+  "tests/test_scraper.py::test_capture_map_saves_file"
+]
