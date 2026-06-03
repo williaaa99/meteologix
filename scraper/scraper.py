@@ -64,11 +64,13 @@ def capture_map(target_date: date | None = None) -> Path:
 
     with sync_playwright() as p:
         browser = p.chromium.launch(
-            headless=False,
+            headless=True,
+            executable_path="/usr/bin/chromium-browser",
             args=[
                 "--disable-blink-features=AutomationControlled",
                 "--no-sandbox",
                 "--disable-setuid-sandbox",
+                "--disable-dev-shm-usage",
             ],
         )
         try:
