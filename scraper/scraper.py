@@ -112,12 +112,25 @@ def capture_map(target_date: date | None = None) -> Path:
         # Wait for map image to appear
         time.sleep(8)
 
-        # Screenshot the full container (map + legend)
-        map_el = WebDriverWait(driver, TIMEOUT_S).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "#main-image-content"))
+        # Wait for map to be present
+        WebDriverWait(driver, TIMEOUT_S).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "#main-image-content img"))
         )
 
-        map_el.screenshot(str(output_path))
+        # Get bounding box of map container (includes legend below)
+        container = driver.find_element(By.CSS_SELECTOR, "#content-image")
+        loc = container.location
+        size = container.size
+
+        # Full page screenshot then crop
+        tmp = output_path.with_suffix(".tmp.png")
+        driver.save_screenshot(str(tmp))
+        img = Image.open(tmp)
+        x, y = int(loc["x"]), int(loc["y"])
+        w, h = int(size["width"]), int(size["height"])
+        cropped = img.crop((x, y, x + w, y + h))
+        cropped.save(str(output_path))
+        tmp.unlink()
 
     finally:
         driver.quit()
