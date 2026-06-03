@@ -112,11 +112,11 @@ def capture_map(target_date: date | None = None) -> Path:
         # Wait for map image to appear
         time.sleep(8)
 
+        # Screenshot the full container (map + legend)
         map_el = WebDriverWait(driver, TIMEOUT_S).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "#main-image-content img"))
+            EC.presence_of_element_located((By.CSS_SELECTOR, "#main-image-content"))
         )
 
-        # Screenshot just the map element
         map_el.screenshot(str(output_path))
 
     finally:
