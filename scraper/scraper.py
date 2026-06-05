@@ -13,7 +13,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 import config
 
-TIMEOUT_S = 60
+TIMEOUT_S = 180
 CHROMIUM_PATH = "/usr/bin/chromium-browser"
 
 USER_AGENT = (
@@ -48,6 +48,8 @@ def _make_driver() -> webdriver.Chrome:
     options.add_experimental_option("useAutomationExtension", False)
     service = Service()
     driver = webdriver.Chrome(service=service, options=options)
+    driver.set_page_load_timeout(180)
+    driver.set_script_timeout(180)
     driver.execute_script(
         "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
     )
@@ -105,12 +107,12 @@ def capture_map(target_date: date | None = None) -> Path:
 
         # Wait for page to load
         import time
-        time.sleep(5)
+        time.sleep(10)
 
         _dismiss_consent_popup(driver)
 
         # Wait for map image to appear
-        time.sleep(8)
+        time.sleep(15)
 
         # Screenshot the map image element
         map_el = WebDriverWait(driver, TIMEOUT_S).until(
