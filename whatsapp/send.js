@@ -12,6 +12,24 @@ const { Boom } = require('@hapi/boom');
 const pino = require('pino');
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
+
+// ── Converte GIF para MP4 via ffmpeg ──────────────────────────
+function convertGifToMp4(gifPath) {
+  const mp4Path = gifPath.replace(/\.gif$/i, '.mp4');
+  try {
+    execSync(
+      `ffmpeg -y -i "${gifPath}" -movflags faststart -pix_fmt yuv420p ` +
+      `-vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" "${mp4Path}" 2>/dev/null`,
+      { timeout: 60000 }
+    );
+    console.log(`GIF convertido para MP4: ${mp4Path}`);
+    return mp4Path;
+  } catch (err) {
+    console.error('Falha ao converter GIF para MP4:', err.message);
+    return null;
+  }
+}
 
 // ── Configuração ──────────────────────────────────────────────
 const GROUP_NAME = 'Previsão Clima por IA';
@@ -97,13 +115,22 @@ async function main() {
         console.log(`Enviando para "${GROUP_NAME}"...`);
 
         if (gifPath && fs.existsSync(gifPath)) {
-          const gifBuffer = fs.readFileSync(gifPath);
-          await sock.sendMessage(groupJid, {
-            video: gifBuffer,
-            gifPlayback: true,
-            caption: messageText,
-            mimetype: 'video/mp4',
-          });
+          // Converte GIF para MP4 (WhatsApp requer MP4 para gifPlayback)
+          const mp4Path = convertGifToMp4(gifPath);
+          if (!mp4Path) {
+            console.error('Não foi possível converter o GIF. Enviando só o texto.');
+            await sock.sendMessage(groupJid, { text: messageText });
+          } else {
+            const videoBuffer = fs.readFileSync(mp4Path);
+            await sock.sendMessage(groupJid, {
+              video: videoBuffer,
+              gifPlayback: true,
+              caption: messageText,
+              mimetype: 'video/mp4',
+            });
+            // Remove o MP4 temporário
+            try { fs.unlinkSync(mp4Path); } catch (_) {}
+          }
           console.log('GIF + mensagem enviados.');
         } else {
           await sock.sendMessage(groupJid, { text: messageText });
